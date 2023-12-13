@@ -1,11 +1,11 @@
 import puppeteer from 'puppeteer';
 
 const url = "https://semantle.com"
-const path = (code) => { `${url}?jtg=${code}` }
+const path = (code) => { return `${url}?jtg=${code}` }
 
 async function main() {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: "new",
   });
   const page = await browser.newPage();
 
