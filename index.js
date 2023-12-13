@@ -49,5 +49,5 @@ async function sendDiscordMessage(url) {
 
 (async () => {
   const semantle = await getToken();
-  await sendDiscordMessage(semantle)
+  await sendDiscordMessage(`It's time for today's Semantle! ${semantle}`)
 })();
