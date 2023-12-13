@@ -1,10 +1,11 @@
 import puppeteer from 'puppeteer';
 
-const url = "http://semantle.com"
+const url = "https://semantle.com"
+const path = (code) => { `${url}?jtg=${code}` }
 
 async function main() {
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
   });
   const page = await browser.newPage();
 
@@ -24,6 +25,8 @@ async function main() {
 
   const textSelector = await page.waitForSelector('#team');
   const code = await textSelector?.evaluate(el => el.textContent);
+  const result = path(code)
+  console.log(result)
   await browser.close();
 };
 
