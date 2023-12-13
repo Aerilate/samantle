@@ -1,15 +1,14 @@
 import puppeteer from 'puppeteer';
 
-const url = "https://semantle.com"
+const url = "http://semantle.com"
 
 async function main() {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
   });
   const page = await browser.newPage();
 
-  await page.goto(url);
-  await page.setViewport({width: 1080, height: 1024});
+  await page.goto(url, {waitUntil: 'networkidle0', timeout: 0});
 
   const closeButton = "#rules-close"
   await page.waitForSelector(closeButton);
@@ -25,8 +24,7 @@ async function main() {
 
   const textSelector = await page.waitForSelector('#team');
   const code = await textSelector?.evaluate(el => el.textContent);
-  console.log(code)
   await browser.close();
 };
 
-main();
+await main();
