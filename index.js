@@ -1,15 +1,17 @@
-import puppeteer from 'puppeteer';
+const puppeteer = require("puppeteer");
+const config = require("./config.json");
+const {Events, Client, GatewayIntentBits } = require('discord.js');
 
-const url = "https://semantle.com"
-const path = (code) => { return `${url}?jtg=${code}` }
+const baseURL = "https://semantle.com"
+const path = (code) => { return `${baseURL}?jtg=${code}` }
 
-async function main() {
+async function getToken() {
   const browser = await puppeteer.launch({
     headless: "new",
   });
   const page = await browser.newPage();
 
-  await page.goto(url, {waitUntil: 'networkidle0', timeout: 0});
+  await page.goto(baseURL, { waitUntil: 'networkidle0', timeout: 0 });
 
   const closeButton = "#rules-close"
   await page.waitForSelector(closeButton);
@@ -28,6 +30,24 @@ async function main() {
   const result = path(code)
   console.log(result)
   await browser.close();
+  return result;
 };
 
-await main();
+async function sendDiscordMessage(url) {
+  const client = new Client({
+    intents: [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMessages,
+    ]
+  });
+  client.once(Events.ClientReady, client => {
+    const channel = client.channels.cache.get(config.channel)
+    channel.send({content: url})
+  });
+  client.login(config.token);
+}
+
+(async () => {
+  const semantle = await getToken();
+  await sendDiscordMessage(semantle)
+})();
