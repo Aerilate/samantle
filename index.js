@@ -1,16 +1,17 @@
 const puppeteer = require("puppeteer");
 const config = require("./config.json");
-const {Events, Client, GatewayIntentBits } = require('discord.js');
+const { Events, Client, GatewayIntentBits } = require('discord.js');
 
+const timeout = 5 * 1000
 const baseURL = "https://semantle.com"
 const path = (code) => { return `${baseURL}?jtg=${code}` }
+const format = (msg) => { return `It's time for today's Semantle! \n ${msg}` }
 
-async function getToken() {
+async function getToken(msgSender) {
   const browser = await puppeteer.launch({
     headless: "new",
   });
   const page = await browser.newPage();
-
   await page.goto(baseURL, { waitUntil: 'networkidle0', timeout: 0 });
 
   const closeButton = "#rules-close"
@@ -27,13 +28,17 @@ async function getToken() {
 
   const textSelector = await page.waitForSelector('#team');
   const code = await textSelector?.evaluate(el => el.textContent);
-  const result = path(code)
-  console.log(result)
+
+  const msg = path(code)
+  console.log(`sending ${msg}`)
+  await msgSender(msg)
+  console.log('timer start')
+  await new Promise(r => setTimeout(r, timeout));
+  console.log('timer done')
   await browser.close();
-  return result;
 };
 
-async function sendDiscordMessage(url) {
+async function sendDiscordMessage(msg) {
   const client = new Client({
     intents: [
       GatewayIntentBits.Guilds,
@@ -42,12 +47,12 @@ async function sendDiscordMessage(url) {
   });
   client.once(Events.ClientReady, client => {
     const channel = client.channels.cache.get(config.channel)
-    channel.send({content: url})
+    channel.send({ content: format(msg) })
   });
   client.login(config.token);
 }
 
 (async () => {
-  const semantle = await getToken();
-  await sendDiscordMessage(`It's time for today's Semantle! ${semantle}`)
+  await getToken(sendDiscordMessage);
+  process.exit();
 })();
