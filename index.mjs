@@ -58,7 +58,7 @@ async function sendDiscordMessage(msg) {
   client.login(config.token);
 }
 
-(async () => {
+export const handler = async (_) => {
   await getToken(sendDiscordMessage);
   process.exit();
-})();
+};
