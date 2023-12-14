@@ -1,4 +1,5 @@
-import puppeteer from "puppeteer";
+import chromium from "@sparticuz/chromium";
+import puppeteer from "puppeteer-core";
 import { Events, Client, GatewayIntentBits } from 'discord.js';
 
 const config = {
@@ -14,9 +15,13 @@ const format = (msg) => { return `${config.baseMsg}\n${msg}` }
 
 async function getToken(msgSender) {
   const browser = await puppeteer.launch({
-    headless: "new",
-  });
-  
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
+    ignoreHTTPSErrors: true,
+  })
+
   const page = await browser.newPage();
   await page.goto(baseURL, { waitUntil: 'networkidle0', timeout: 0 });
 
@@ -31,7 +36,7 @@ async function getToken(msgSender) {
   const startButton = "#start"
   await page.waitForSelector(startButton);
   await page
-  
+
   const textSelector = await page.waitForSelector('#team');
   const code = await textSelector?.evaluate(el => el.textContent);
 
