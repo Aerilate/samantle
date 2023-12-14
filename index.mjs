@@ -1,10 +1,10 @@
-const puppeteer = require("puppeteer");
-const { Events, Client, GatewayIntentBits } = require('discord.js');
+import puppeteer from "puppeteer";
+import { Events, Client, GatewayIntentBits } from 'discord.js';
 
 const config = {
   channel: process.env.CHANNEL,
   token: process.env.TOKEN,
-  sleep: process.env.SLEEP,
+  sleep: process.env.SLEEP || 5 * 1000,
   baseMsg: process.env.MESSAGE || "It's time for today's Semantle!",
 }
 
@@ -16,6 +16,7 @@ async function getToken(msgSender) {
   const browser = await puppeteer.launch({
     headless: "new",
   });
+  
   const page = await browser.newPage();
   await page.goto(baseURL, { waitUntil: 'networkidle0', timeout: 0 });
 
@@ -29,8 +30,8 @@ async function getToken(msgSender) {
 
   const startButton = "#start"
   await page.waitForSelector(startButton);
-  await page.click(startButton);
-
+  await page
+  
   const textSelector = await page.waitForSelector('#team');
   const code = await textSelector?.evaluate(el => el.textContent);
 
