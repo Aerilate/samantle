@@ -1,11 +1,16 @@
 const puppeteer = require("puppeteer");
-const config = require("./config.json");
 const { Events, Client, GatewayIntentBits } = require('discord.js');
 
-const timeout = 5 * 1000
+const config = {
+  channel: process.env.CHANNEL,
+  token: process.env.TOKEN,
+  sleep: process.env.SLEEP,
+  baseMsg: process.env.MESSAGE || "It's time for today's Semantle!",
+}
+
 const baseURL = "https://semantle.com"
 const path = (code) => { return `${baseURL}?jtg=${code}` }
-const format = (msg) => { return `It's time for today's Semantle! \n ${msg}` }
+const format = (msg) => { return `${config.baseMsg}\n${msg}` }
 
 async function getToken(msgSender) {
   const browser = await puppeteer.launch({
@@ -33,7 +38,7 @@ async function getToken(msgSender) {
   console.log(`sending ${msg}`)
   await msgSender(msg)
   console.log('timer start')
-  await new Promise(r => setTimeout(r, timeout));
+  await new Promise(r => setTimeout(r, config.sleep));
   console.log('timer done')
   await browser.close();
 };
