@@ -1,11 +1,12 @@
 import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 import { Events, Client, GatewayIntentBits } from 'discord.js';
+import creds from './creds.json';
 
 const config = {
-  channel: process.env.CHANNEL,
-  token: process.env.TOKEN,
-  sleep: process.env.SLEEP || 5 * 1000,
+  channel: creds.CHANNEL,
+  token: creds.TOKEN,
+  sleep: process.env.SLEEP || 15 * 1000,
   baseMsg: process.env.MESSAGE || "It's time for today's Semantle!",
 }
 
