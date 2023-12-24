@@ -1,7 +1,7 @@
 import chromium from "@sparticuz/chromium";
 import puppeteer from "puppeteer-core";
 import { Events, Client, GatewayIntentBits } from 'discord.js';
-import creds from './creds.json';
+import creds from './creds.json' with { type: "json" };
 
 const config = {
   channel: creds.CHANNEL,
@@ -64,7 +64,7 @@ async function sendDiscordMessage(msg) {
   client.login(config.token);
 }
 
-export const handler = async (_) => {
+(async () => {
   await getToken(sendDiscordMessage);
   process.exit();
-};
+})()
