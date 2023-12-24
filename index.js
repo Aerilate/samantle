@@ -1,7 +1,7 @@
-import chromium from "@sparticuz/chromium";
-import puppeteer from "puppeteer-core";
-import { Events, Client, GatewayIntentBits } from 'discord.js';
-import creds from './creds.json' with { type: "json" };
+const chromium  = require( "@sparticuz/chromium");
+const puppeteer  = require( "puppeteer-core");
+const { Events, Client, GatewayIntentBits }  = require( 'discord.js');
+const creds  = require( './creds.json');
 
 const config = {
   channel: creds.CHANNEL,
