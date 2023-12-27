@@ -1,12 +1,11 @@
-const chromium = require("@sparticuz/chromium");
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 const { Events, Client, GatewayIntentBits } = require('discord.js');
-const creds = require('./creds.json');
+const creds = require("./creds.json")
 
 const config = {
-  channel: creds.CHANNEL,
   token: creds.TOKEN,
-  sleep: process.env.SLEEP || 15 * 1000,
+  channel: creds.CHANNEL,
+  sleep: process.env.SLEEP,
   baseMsg: process.env.MESSAGE || "It's time for today's Semantle!",
 }
 
@@ -16,13 +15,8 @@ const format = (msg) => { return `${config.baseMsg}\n${msg}` }
 
 async function getToken(msgSender) {
   const browser = await puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(),
-    headless: chromium.headless,
-    ignoreHTTPSErrors: true,
-  })
-
+    headless: "new",
+  });
   const page = await browser.newPage();
   await page.goto(baseURL, { waitUntil: 'networkidle0', timeout: 0 });
 
@@ -36,7 +30,7 @@ async function getToken(msgSender) {
 
   const startButton = "#start"
   await page.waitForSelector(startButton);
-  await page
+  await page.click(startButton);
 
   const textSelector = await page.waitForSelector('#team');
   const code = await textSelector?.evaluate(el => el.textContent);
@@ -67,4 +61,4 @@ async function sendDiscordMessage(msg) {
 (async () => {
   await getToken(sendDiscordMessage);
   process.exit();
-})()
+})();
