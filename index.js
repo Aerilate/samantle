@@ -60,5 +60,4 @@ async function sendDiscordMessage(msg) {
 
 (async () => {
   await getToken(sendDiscordMessage);
-  process.exit();
 })();
