@@ -21,8 +21,16 @@ const formatJunior = (msg) => {
 
 async function startGame(url, formatFunc) {
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     protocolTimeout: 60 * 60 * 1000,
+    devtools: true,
+    args: [
+      "--ignore-certificate-errors",
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-accelerated-2d-canvas",
+      "--disable-gpu",
+    ],
   });
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: "networkidle0", timeout: 0 });
