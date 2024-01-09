@@ -5,28 +5,22 @@ const creds = require("./creds.json")
 const config = {
   token: creds.TOKEN,
   channel: creds.CHANNEL,
-  sleep: process.env.SLEEP,
-  baseMsg: process.env.MESSAGE || "It's time for today's Semantle!",
+  baseMsg: process.env.MESSAGE || "Yee haw! It's time for today's Semantle!",
 }
 
-const baseURL = "https://semantle.com"
-const path = (code) => { return `${baseURL}?jtg=${code}` }
-const format = (msg) => { return `${config.baseMsg}\n${msg}` }
+const urlRegular = "https://semantle.com"
+const urlJunior = "https://semantle.com/junior"
+const urlTeam = (baseURL, code) => { return `${baseURL}?jtg=${code}` }
+const formatRegular = (msg) => { return `Yee haw! It's time for today's Semantle!\n${msg}` }
+const formatJunior = (msg) => { return `And for today's junior!\n${msg}` }
 
-async function getToken(msgSender) {
+async function startGame(url, formatFunc) {
   const browser = await puppeteer.launch({
-      headless: true,
-      devtools: true,
-      args: [
-        '--ignore-certificate-errors',
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-accelerated-2d-canvas',
-        '--disable-gpu'
-      ]
+      headless: false,
+      protocolTimeout: 60 * 60 * 1000
   });
   const page = await browser.newPage();
-  await page.goto(baseURL, { waitUntil: 'networkidle0', timeout: 0 });
+  await page.goto(url, { waitUntil: 'networkidle0', timeout: 0 });
 
   const closeButton = "#rules-close"
   await page.waitForSelector(closeButton);
@@ -43,12 +37,12 @@ async function getToken(msgSender) {
   const textSelector = await page.waitForSelector('#team');
   const code = await textSelector?.evaluate(el => el.textContent);
 
-  const msg = path(code)
+  const msg = urlTeam(url, code)
   console.log(`sending ${msg}`)
-  await msgSender(msg)
-  console.log('timer start')
-  await new Promise(r => setTimeout(r, config.sleep));
-  console.log('timer done')
+  await sendDiscordMessage(formatFunc(msg))
+
+  const winButton = ".animate-reveal"
+  await page.waitForSelector(winButton, {timeout: 0});
   await browser.close();
 };
 
@@ -61,11 +55,15 @@ async function sendDiscordMessage(msg) {
   });
   client.once(Events.ClientReady, client => {
     const channel = client.channels.cache.get(config.channel)
-    channel.send({ content: format(msg) })
+    channel.send({ content: msg })
   });
   client.login(config.token);
 }
 
-(async () => {
-  await getToken(sendDiscordMessage);
-})();
+(async function () {
+  await startGame(urlRegular, formatRegular);
+  console.log("regular completed")
+  await startGame(urlJunior, formatJunior);
+  console.log("junior completed")
+  await sendDiscordMessage("Well done!")
+})()
