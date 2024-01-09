@@ -15,7 +15,15 @@ const format = (msg) => { return `${config.baseMsg}\n${msg}` }
 
 async function getToken(msgSender) {
   const browser = await puppeteer.launch({
-    headless: "new",
+      headless: true,
+      devtools: true,
+      args: [
+        '--ignore-certificate-errors',
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu'
+      ]
   });
   const page = await browser.newPage();
   await page.goto(baseURL, { waitUntil: 'networkidle0', timeout: 0 });
