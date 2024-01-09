@@ -60,10 +60,20 @@ async function sendDiscordMessage(msg) {
   client.login(config.token);
 }
 
-(async function () {
+async function main() {
   await startGame(urlRegular, formatRegular);
   console.log("regular completed")
   await startGame(urlJunior, formatJunior);
   console.log("junior completed")
   await sendDiscordMessage("Well done!")
-})()
+  await new Promise(r => setTimeout(r, 5000));
+}
+
+main()
+    .then(() => {
+        process.exit(0);
+    })
+    .catch(err => {
+        console.error(err);
+        process.exit(1);
+    });
