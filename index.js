@@ -5,7 +5,6 @@ const creds = require("./creds.json");
 const config = {
   token: creds.TOKEN,
   channel: creds.CHANNEL,
-  baseMsg: process.env.MESSAGE || "Yee haw! It's time for today's Semantle!",
 };
 
 const urlRegular = "https://semantle.com";
