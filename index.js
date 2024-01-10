@@ -22,7 +22,7 @@ const formatJunior = (msg) => {
 
 async function startGame(url, formatFunc) {
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: "new",
     protocolTimeout: 60 * 60 * 1000,
     devtools: true,
     args: [
