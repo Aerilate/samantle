@@ -7,13 +7,14 @@ const config = {
   channel: creds.CHANNEL,
 };
 
+const role = "@semantle subscribers"
 const urlRegular = "https://semantle.com";
 const urlJunior = "https://semantle.com/junior";
 const urlTeam = (baseURL, code) => {
   return `${baseURL}?jtg=${code}`;
 };
 const formatRegular = (msg) => {
-  return `Yee haw! It's time for today's Semantle!\n${msg}`;
+  return `${role} Yee haw! It's time for today's Semantle!\n${msg}`;
 };
 const formatJunior = (msg) => {
   return `And for today's junior!\n${msg}`;
