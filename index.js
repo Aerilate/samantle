@@ -7,7 +7,7 @@ const config = {
   channel: creds.CHANNEL,
 };
 
-const role = "@semantle subscribers"
+const role = "<@&1185009963114958928>";
 const urlRegular = "https://semantle.com";
 const urlJunior = "https://semantle.com/junior";
 const urlTeam = (baseURL, code) => {
